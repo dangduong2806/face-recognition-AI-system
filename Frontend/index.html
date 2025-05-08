@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Detection Frontend</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+    }
+    h2 {
+      text-align: center;
+    }
+    .upload-area {
+      margin: 1rem 0;
+      border: 2px dashed #ccc;
+      padding: 1rem;
+      text-align: center;
+    }
+    .result {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>AI Image Detection</h2>
+
+  <div class="upload-area">
+    <input type="file" id="imageInput" accept="image/*" />
+    <button onclick="uploadImage()">Upload & Detect</button>
+  </div>
+
+  <div class="result" id="result">Chưa có kết quả</div>
+
+  <script>
+    function uploadImage() {
+      const input = document.getElementById('imageInput');
+      const resultDiv = document.getElementById('result');
+
+      if (!input.files.length) {
+        resultDiv.textContent = 'Vui lòng chọn một ảnh!';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', input.files[0]);
+
+      fetch('http://localhost:5000/predict', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.result == true) {
+          resultDiv.textContent = '✅ Được phép vào';
+          resultDiv.style.color = 'green';
+        } else {
+          resultDiv.textContent = '❌ Không được phép vào';
+          resultDiv.style.color = 'red';
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        resultDiv.textContent = 'Lỗi khi gửi yêu cầu!';
+        resultDiv.style.color = 'gray';
+      });
+    }
+  </script>
+</body>
+</html>
