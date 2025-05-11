@@ -1,0 +1,6 @@
+from supabase import create_client
+import os
+supabase_url = os.getenv("https://esvysdubkivjabnfaudl.supabase.co")
+supabase_key = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzdnlzZHVia2l2amFibmZhdWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3ODUyMDYsImV4cCI6MjA2MjM2MTIwNn0.W961k0YpcU3RpexJDK9Kyj4RLpSync-EXuOXNFWxi1A")
+
+supabase = create_client(supabase_url, supabase_key)
