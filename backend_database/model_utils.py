@@ -61,10 +61,6 @@ def get_embedding(image_bytes):
         # Bước 4.2: Chuyển đổi khuôn mặt về định dạng mà DeepFace yêu cầu
         face_img = cv2.cvtColor(face_img, cv2.COLOR_BGR2RGB)
 
-        # # Bước 4.3: Chuyển đổi khuôn mặt về định dạng PIL
-        # face_img = Image.fromarray(face_img)
-
-        # face_img = np.array(face_img)
         # Bước 5: Trích xuất embedding từ khuôn mặt đã cắt
         result = DeepFace.represent(img_path=face_img, model_name="Facenet", enforce_detection=False)
 
