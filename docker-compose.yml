@@ -1,0 +1,72 @@
+# version: "3.9"
+
+# services:
+#   frontend:
+#     build:
+#       context: ./Frontend
+#       dockerfile: Dockerfile
+#     container_name: nginx_frontend
+#     ports:
+#       - "8080:80"
+#     depends_on:
+#       - backend_ai
+#       - backend_database
+#     networks:
+#       - face-network
+
+#   backend_ai:
+#     build: ./backend_ai
+#     container_name: ai
+#     ports:
+#       - "7000:7000"
+#     depends_on:
+#       - backend_database
+#     networks:
+#       - face-network
+
+#   backend_database:
+#     build: ./backend_database
+#     container_name: data
+#     ports:
+#       - "8000:8000"
+#     networks:
+#       - face-network
+
+# networks:
+#   face-network:
+#     driver: bridge
+version: "3.9"
+
+services:
+  frontend:
+    image: tonthanhdat/csai-frontend
+    container_name: nginx_frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend_ai
+      - backend_database
+    networks:
+      - face-network
+
+  backend_ai:
+    image: tonthanhdat/csai-backend_ai
+    container_name: ai
+    ports:
+      - "7000:7000"
+    depends_on:
+      - backend_database
+    networks:
+      - face-network
+
+  backend_database:
+    image: tonthanhdat/csai-backend_database
+    container_name: data
+    ports:
+      - "8000:8000"
+    networks:
+      - face-network
+
+networks:
+  face-network:
+    driver: bridge
