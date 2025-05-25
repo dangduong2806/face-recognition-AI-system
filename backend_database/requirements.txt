@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pillow
+deepface
+python-multipart
+supabase
+python-dotenv
+opencv-python-headless
+unidecode
