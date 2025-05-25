@@ -119,7 +119,3 @@ def compare_embedding(embedding, saved_data, threshold=6.03):
         return best_name, best_cv, min_distance
     return "unknown", "unknown", min_distance
 
-def draw_face_info(frame, x, y, w, h, name, chuc_vu, color=(0,255,0)):
-    cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-    label = f"{name} ({chuc_vu})" if name != "unknown" else "Khong duoc phep vao"
-    cv2.putText(frame, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 2)
