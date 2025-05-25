@@ -50,7 +50,27 @@ Nhận diện gương mặt ở khu vực an ninh. Hiện nay, tại các cơ s�
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Để nhận diện gương mặt, click chọn mở camera, nếu được vào hệ thống AI trả về kết quả tên, chức vụ và trạng thái được vào; nếu không được vào, hệ thống trả về Unknown, và trạng thái không được vào. Để tắt camera, click chọn tắt camera.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Đối với admin, để thêm người dùng, click chọn vào nút thêm người dùng góc trái, điền thông tin rồi chọn lưu. Để sửa, và xoá thì chọn ở cột phía bên phải. Sau khi sửa xong, click chọn lưu.
 ## Liên kết docker hub
-## Hướng dẫn chạy
+Toàn bộ các image đã được đẩy lên Docker Hub với tên người dùng `tonthanhdat`. Bạn có thể pull trực tiếp chúng bằng các liên kết dưới đây:
+
+| Thành phần        | Docker Hub Link |
+|-------------------|------------------|
+| Backend AI        | [tonthanhdat/csai-backend_ai](https://hub.docker.com/r/tonthanhdat/csai-backend_ai) |
+| Backend Database  | [tonthanhdat/csai-backend_database](https://hub.docker.com/r/tonthanhdat/csai-backend_database) |
+| Frontend          | [tonthanhdat/csai-frontend](https://hub.docker.com/r/tonthanhdat/csai-frontend) |
+
+---
+## Cách Chạy Hệ Thống
+
+
+### Bước 1: Đảm bảo tệp docker-compose.yml đã có sẵn trong thư mục chương trình
+
+### Bước 2: Khởi chạy hệ thống
+``` bash 
+docker-compose up -d
+```
+### Bước 3: Truy cập giao diện
+#### Người dùng: http://localhost:8080
+
 ## Project status
 The project is completed
 ## Notes
