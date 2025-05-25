@@ -61,7 +61,7 @@ Toàn bộ các image đã được đẩy lên Docker Hub với tên người d
 ---
 ## Cách Chạy Hệ Thống
 
-# Bước 1: Tải các image từ Docker Hub
+### Bước 1: Tải các image từ Docker Hub
 ```bash
 docker pull tonthanhdat/csai-backend_ai
 docker pull tonthanhdat/csai-backend_database
