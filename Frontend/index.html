@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Ứng dụng Nhận Diện Ảnh AI - Camera</title>
+    <style>
+        body {
+            background-image: url('./background.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        .camera-option {
+            width: 300px;
+            margin: 0 auto;
+        }
+        .camera-viewer {
+            position: relative;
+            width: 300px;
+            height: 225px;
+        }
+        #cameraView {
+            transform: scaleX(-1);
+            -webkit-transform: scaleX(-1);
+            width: 100%;
+            height: 100%;
+            border: 5px solid #007bff;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        #canvas {
+            transform: scaleX(1);
+            -webkit-transform: scaleX(1);
+            width: 300px;
+            height: 225px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            margin: 0;
+        }
+        .camera-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .camera-controls button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+        }
+        .camera-controls button:hover {
+            background-color: #0056b3;
+        }
+        .admin-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .admin-button a button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+        }
+        .admin-button a button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+        .warning {
+            color: orange;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-button">
+        <a href="/login.html"><button>Admin</button></a>
+    </div>
+    <div class="container">
+        <h2>Nhận Diện Ảnh từ Camera</h2>
+        <div class="camera-option">
+            <label for="cameraView">Xem trước camera:</label>
+            <div class="camera-viewer">
+                <video id="cameraView" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+        <div class="camera-controls">
+            <button id="toggleCameraBtn">Dùng camera</button>
+        </div>
+        <canvas id="capturedImageCanvas" class="hidden"></canvas>
+        <div id="detectionResult" class="result success">Kết quả nhận diện:</div>
+        <ul id="resultsList"></ul>
+    </div>
+
+    <script>
+        const cameraView = document.getElementById('cameraView');
+        const toggleCameraBtn = document.getElementById("toggleCameraBtn");
+        const capturedImageCanvas = document.getElementById('capturedImageCanvas');
+        const ctx = capturedImageCanvas.getContext('2d');
+        const detectionResultDiv = document.getElementById('detectionResult');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let faceDetectionIntervalId = null;
+        let stream;
+
+        async function enableCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                cameraView.srcObject = stream;
+                toggleCameraBtn.textContent = "Tắt camera";
+                canvas.width = 300; // Đặt cố định để khớp với CSS
+                canvas.height = 225;
+                startFaceDetectionLoop(); // <- Gọi nhận diện liên tục sau khi bật camera
+            } catch (error) {
+                console.error('Lỗi khi truy cập camera:', error);
+                alert('Không thể truy cập camera.');
+            }
+        }
+
+        function displayResults(data) {
+
+            if (toggleCameraBtn.textContent === "Dùng camera") {
+                console.log("Camera đang tắt, không hiển thị kết quả.");
+                return;
+            }
+
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = ''; // Xóa kết quả cũ
+
+            if (!Array.isArray(data.results) || data.results.length === 0) {
+                resultsList.innerHTML = '<li>Không phát hiện khuôn mặt nào.</li>';
+                return;
+            }
+
+            data.results.forEach(result => {
+                // lỗi gọi toFixed, kiểm tra trước nếu không có giá trị
+                const distanceText = (result.distance != null)
+                    ? result.distance.toFixed(2)
+                    : 'N/A';
+                const statusText = result.status === 'Duoc phep vao' ? '✅ Được phép vào' : '🚫 Không được phép vào';
+                const statusClass = result.status === 'Duoc phep vao' ? 'success' : 'error';
+
+                const nameText = decodeURIComponent(decodeURIComponent(result.name));
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>${nameText}</strong> (${result.chuc_vu})<br/>
+                    <strong>Khoang cach:</strong> ${distanceText} cm<br/>
+                    <span class="${statusClass}" style="display: block">${statusText}</span>
+                `;
+                resultsList.appendChild(li);
+            });
+        }
+
+                // Vẽ bounding box lên canvas
+        function drawBoundingBoxes(results) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (!Array.isArray(results)) {
+                console.error('Results không phải là mảng:', results);
+                return;
+            }
+
+            results.forEach(result => {
+                if (result.bounding_box) {
+                    const { x, y, w, h } = result.bounding_box;
+                    const scaleX = canvas.width / cameraView.videoWidth;
+                    const scaleY = canvas.height / cameraView.videoHeight;
+                    const adjustedX = (cameraView.videoWidth - x - w) *scaleX;
+                    const adjustedY = y * scaleY;
+                    const adjustedW = w * scaleX;
+                    const adjustedH = h * scaleY;
+
+                    context.strokeStyle = result.status === 'Duoc phep vao' ? 'green' : 'red';
+                    context.lineWidth = 2;
+                    context.strokeRect(adjustedX, adjustedY, adjustedW, adjustedH);
+                    context.fillStyle = context.strokeStyle;
+                    context.font = '12px Arial';
+                    context.fillText(`${result.name} (${result.chuc_vu})`, adjustedX, adjustedY - 5);
+                }
+            });
+        }
+
+        function startFaceDetectionLoop() {
+            if (faceDetectionIntervalId) return; // Tránh khởi tạo lại nếu đã chạy
+
+            faceDetectionIntervalId = setInterval(async () => {
+                if (!cameraView.videoWidth || !cameraView.videoHeight) return;
+
+                capturedImageCanvas.width = cameraView.videoWidth;
+                capturedImageCanvas.height = cameraView.videoHeight;
+                ctx.drawImage(cameraView, 0, 0, cameraView.videoWidth, cameraView.videoHeight);
+
+                const imageDataURL = capturedImageCanvas.toDataURL('image/jpeg');
+
+                try {
+                    const response = await fetch('/api/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ image_data: imageDataURL }),
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        console.log('Phản hồi từ /api/predict:', data);
+                        displayResults(data);
+                        if (Array.isArray(data.results) && data.results.length > 0) {
+                            drawBoundingBoxes(data.results);
+                        }
+                    } else {
+                        console.error('Lỗi nhận diện:', data);
+                        detectionResultDiv.textContent = 'Lỗi nhận diện';
+                        detectionResultDiv.className = 'result error';
+                    }
+                } catch (err) {
+                    detectionResultDiv.textContent = 'Đang chờ xử lý';
+                    detectionResultDiv.className = 'result error';
+                    console.error('Predict error:', err);
+                }
+            }, 1000);
+        }
+
+        async function disableCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                cameraView.srcObject = null;
+                toggleCameraBtn.textContent = "Dùng camera";
+            }
+            if (faceDetectionIntervalId) {
+                clearInterval(faceDetectionIntervalId);
+                faceDetectionIntervalId = null;
+            }
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            const resultsList = document.getElementById('resultsList');
+            resultsList.innerHTML = '';
+
+        }
+
+
+        toggleCameraBtn.addEventListener("click", () => {
+            if (toggleCameraBtn.textContent === "Dùng camera") {
+                enableCamera();
+            } else {
+                disableCamera();
+            }
+        });
+
+        async function captureImage() {
+            if (!cameraView.srcObject) {
+                alert('Camera chưa được bật.');
+                return;
+            }
+            capturedImageCanvas.width = cameraView.videoWidth;
+            capturedImageCanvas.height = cameraView.videoHeight;
+            ctx.drawImage(cameraView, 0, 0, cameraView.videoWidth, cameraView.videoHeight);
+            const imageDataURL = capturedImageCanvas.toDataURL('image/jpg');
+
+            detectionResultDiv.textContent = 'Đang xử lý ảnh chụp...';
+            detectionResultDiv.className = 'result warning';
+
+            try {
+                const response = await fetch('/api/db/upload_captured_image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image_data: imageDataURL }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    detectionResultDiv.textContent = data.message || 'Ảnh đã được lưu.';
+                    detectionResultDiv.className = 'result success';
+                    console.log('Ảnh đã được lưu vào database:', data);
+                } else {
+                    detectionResultDiv.textContent = data.error || 'Lỗi khi tải ảnh lên.';
+                    detectionResultDiv.className = 'result error';
+                    console.error('Lỗi khi tải ảnh lên:', data);
+                }
+            } catch (error) {
+                detectionResultDiv.textContent = 'Lỗi mạng hoặc server.';
+                detectionResultDiv.className = 'result error';
+                console.error('Lỗi gửi yêu cầu:', error);
+            }
+        }
+    </script>
+</body>
+</html>

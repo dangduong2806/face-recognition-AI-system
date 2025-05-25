@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Face Recognition Admin</title>
+  <style>
+    /* Giữ nguyên CSS từ mã của bạn */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      position: relative;
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./background.jpg'); /* Lớp phủ mờ + hình nền */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('./background.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(5px); /* Làm mờ hình nền */
+      z-index: -1; /* Đặt phía sau nội dung */
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      width: 320px;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
+
+
+    .login-container h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    .login-container input[type="text"],
+    .login-container input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .login-container button:hover {
+      background-color: #2471a3;
+    }
+
+    .error-message {
+      color: #e74c3c;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .admin-panel {
+      display: none;
+      padding: 20px;
+      margin: 0 auto;
+      max-width: 1200px;
+      width: 100%;
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      transform: none;
+      z-index: 2;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between; /* Đẩy nút sang bên phải */
+      align-items: center; /* Căn giữa theo chiều dọc */
+      margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: left;
+      margin-bottom: 0;
+    }
+
+    .btn-camera {
+      background-color: #27ae60; /* Màu xanh lá cây tương tự nút "Thêm người dùng" */
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-camera:hover {
+      background-color: #219150; /* Màu khi hover */
+    }
+
+    .btn-add, .btn-edit, .btn-danger {
+      border: none;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn-add { background-color: #27ae60; color: white; }
+    .btn-add:hover { background-color: #219150; }
+
+    .btn-edit { background-color: #f39c12; color: white; }
+    .btn-edit:hover { background-color: #d68910; }
+
+    .btn-danger { background-color: #e74c3c; color: white; }
+    .btn-danger:hover { background-color: #c0392b; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px; /* Đảm bảo padding đồng đều */
+      text-align: center; /* Căn giữa nội dung theo chiều ngang */
+      vertical-align: middle; /* Căn giữa nội dung theo chiều dọc */
+      border-bottom: 1px solid #eee; /* Giữ đường viền dưới */
+    }
+
+    th {
+      background-color: #2c3e50;
+      color: white;
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    td:last-child {
+      display: flex;
+      justify-content: center;
+      gap: 5px; /* Khoảng cách giữa các nút */
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    img {
+      border-radius: 5px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      width: 320px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+      animation: fadeIn 0.3s ease-in-out;
+      margin-top: 20px;
+    }
+
+    .toast {
+      visibility: hidden;
+      min-width: 250px;
+      background-color: #2ecc71;
+      color: white;
+      text-align: center;
+      border-radius: 6px;
+      padding: 12px;
+      position: fixed;
+      z-index: 99;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: bold;
+      transition: visibility 0s, opacity 0.5s ease-in-out;
+      opacity: 0;
+    }
+
+    .toast.error {
+      background-color: #e74c3c;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #deleteModal {
+      z-index: 11;
+    }
+
+    #deleteModal .modal-content {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: fadeIn 0.3s ease-in-out;
+      width: 400px;
+      text-align: center;
+    }
+
+    #deleteModal button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    #deleteModal button#confirmDelete {
+      background-color: #e74c3c;
+      color: white;
+    }
+
+    #deleteModal button#cancelDelete {
+      background-color: #bdc3c7;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-overlay"></div>
+  <div class="login-container" id="loginSection">
+    <h2>Đăng nhập</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Tên người dùng" required />
+      <input type="password" id="password" placeholder="Mật khẩu" required />
+      <button type="submit">Đăng nhập</button>
+      <button type="button" onclick="window.location.href='/index.html'" class="w-full mt-2 bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600">Quay lại</button>
+    </form>
+    <div class="error-message" id="errorMessage">Tên người dùng hoặc mật khẩu không đúng!</div>
+  </div>
+
+  <div class="admin-panel" id="adminPanel">
+    <div class="header">
+      <h1>Face Recognition Admin Panel</h1>
+      <button type="button" onclick="window.location.href='/index.html'" class="btn-camera">Chuyển sang Camera</button>
+    </div>
+    <button class="btn-add" onclick="openModal()">Thêm người dùng</button>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>STT</th>
+          <th>Tên</th>
+          <th>Chức vụ</th>
+          <th>Ảnh</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody id="userList"></tbody>
+    </table>
+
+    <!-- Modal -->
+    <div id="userModal" class="modal">
+      <div class="modal-content">
+        <h3 id="modalTitle">Danh sách người dùng</h3>
+        <form id="userForm">
+          <input type="text" id="name" placeholder="Tên người dùng" required />
+          <input type="text" id="role" placeholder="Chức vụ" required />
+          <input type="file" id="photo" accept="image/*" />
+          <input type="hidden" id="editIndex" value="-1" />
+          <button type="submit">Lưu</button>
+          <button type="button" onclick="closeModal()">Huỷ</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+  </div>
+
+  <!-- Custom Delete Confirmation Modal -->
+  <div id="deleteModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h3 style="color: #e74c3c; margin-bottom: 20px;">Xác nhận xóa</h3>
+      <p>Bạn có chắc muốn xóa người dùng này không?</p>
+      <div style="margin-top: 20px;">
+        <button id="confirmDelete" style="background-color: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">Xóa</button>
+        <button id="cancelDelete" style="background-color: #bdc3c7; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">Hủy</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let validUsers = {};
+    let users = [];
+
+    // Load credentials from admin.txt
+    async function loadCredentials() {
+      try {
+        const response = await fetch('/admin/admin.txt'); // Đảm bảo khớp với nginx.conf
+        const text = await response.text();
+        const lines = text.trim().split('\n').filter(line => line.trim() !== '');
+        validUsers = lines.reduce((acc, line) => {
+          const [username, password] = line.split(':').map(s => s.trim());
+          if (username && password) acc[username] = password;
+          return acc;
+        }, {});
+      } catch (err) {
+        console.error('Error loading credentials:', err);
+        validUsers = { 'oke': '3108' }; // Giá trị mặc định
+      }
+    }
+
+    // Login function
+    async function login(event) {
+      event.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMessage = document.getElementById('errorMessage');
+
+      if (validUsers[username] === password) {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        await loadUsersFromServer();
+      } else {
+        errorMessage.style.display = 'block';
+        setTimeout(() => {
+          errorMessage.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Load users from server
+    async function loadUsersFromServer() {
+      try {
+        const res = await fetch('/api2/get_people');
+        const response = await res.json();
+        if (response.status === 'Ok') {
+          users = response.data.map(user => ({
+            id: user.id,
+            name: decodeURIComponent(user.name),
+            role: decodeURIComponent(user.chuc_vu),
+            image_url: user.image_url
+          }));
+          renderUsers();
+        } else {
+          throw new Error('Failed to load users');
+        }
+      } catch (err) {
+        showToast('Không thể tải danh sách người dùng!', true);
+      }
+    }
+    // Save user to server
+    async function saveUserToServer(user, index, userId = -1) { 
+        if (!user.name || !user.role) { // Kiểm tra tên và chức vụ
+            showToast('Vui lòng nhập tên và chức vụ!', true); // Thông báo lỗi
+            return;
+        }
+        if (!user.file && index < 0) {// Kiểm tra file ảnh
+            showToast('Vui lòng chọn file ảnh!', true);
+            return;
+        }
+
+        const formData = new FormData();// Tạo FormData để gửi dữ liệu
+        formData.append('name', user.name); // Mã hóa tên
+        formData.append('chuc_vu', user.role);
+        if (user.file) formData.append('image', user.file);
+
+        try {
+            let url = '/api2/add_person';
+            let method = 'POST';
+            if (index >= 0 && userId !== -1) {
+                url = `/api2/update_person/${userId}`;
+                method = 'PUT';
+            }
+
+            const response = await fetch(url, {
+                method,
+                body: formData
+            });
+            const result = await response.json();
+            if (response.ok) {
+                showToast(index >= 0 ? 'Cập nhật người dùng thành công!' : 'Thêm người dùng thành công!');
+                await loadUsersFromServer();
+                closeModal();
+            } else {
+                showToast(`Lỗi: ${result.detail || 'Không thể lưu người dùng'}`, true);
+            }
+        } catch (error) {
+            console.error('Error saving user:', error);
+            showToast(`Đã xảy ra lỗi khi lưu người dùng: ${error.message}`, true);
+        }
+    }
+
+    // Delete user from server
+    async function deleteUserFromServer(id) {
+      try {
+        const res = await fetch(`/api2/delete_person/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        await loadUsersFromServer();
+        showToast('Xóa người dùng thành công!');
+      } catch (err) {
+        showToast('Xóa người dùng thất bại!', true);
+      }
+    }
+
+    // Render users table
+    function renderUsers() {
+      const list = document.getElementById('userList');
+      list.innerHTML = '';
+      users.forEach((user, index) => {
+        list.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${user.name}</td>
+            <td>${user.role}</td>
+            <td><img src="${user.image_url}" alt="Ảnh" width="50" /></td>
+            <td>
+              <div>
+                <button class="btn-edit" onclick="openModal(${index}, ${user.id})">Sửa</button>
+                <button class="btn-danger" onclick="deleteUser(${user.id})">Xóa</button>
+              </div>
+            </td>
+          </tr>`;
+      });
+    }
+
+    // Open modal for add/edit
+    function openModal(index = -1, userId = -1) {
+      const modal = document.getElementById('userModal');
+      const form = document.getElementById('userForm');
+      document.getElementById('modalTitle').textContent = index >= 0 ? 'Sửa người dùng' : 'Thêm người dùng';
+
+      if (index >= 0) {
+        const user = users[index];
+        document.getElementById('name').value = user.name;
+        document.getElementById('role').value = user.role;
+        // Thêm input ẩn để lưu userId
+        let editIdInput = document.getElementById('editId');
+        if (!editIdInput) {
+          editIdInput = document.createElement('input');
+          editIdInput.type = 'hidden';
+          editIdInput.id = 'editId';
+          form.appendChild(editIdInput);
+        }
+        editIdInput.value = userId;
+        document.getElementById('editIndex').value = index;
+      } else {
+        form.reset();
+        document.getElementById('editIndex').value = -1;
+        const editIdInput = document.getElementById('editId');
+        if (editIdInput) editIdInput.remove();
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('userModal').style.display = 'none';
+    }
+
+    // Delete user confirmation
+    function deleteUser(id) {
+      const modal = document.getElementById('deleteModal');
+      modal.style.display = 'flex';
+
+      document.getElementById('confirmDelete').onclick = async () => {
+        await deleteUserFromServer(id);
+        modal.style.display = 'none';
+      };
+      document.getElementById('cancelDelete').onclick = () => {
+        modal.style.display = 'none';
+      };
+    }
+
+    // Handle form submission
+    document.getElementById('userForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const role = document.getElementById('role').value.trim();
+      const fileInput = document.getElementById('photo');
+      const index = parseInt(document.getElementById('editIndex').value);
+      const userId = document.getElementById('editId') ? parseInt(document.getElementById('editId').value) : -1;
+
+      const user = {
+        name,
+        role,
+        file: fileInput.files[0]
+      };
+
+      try {
+        await saveUserToServer(user, index, userId);
+      } catch (err) {
+        showToast('Lưu người dùng thất bại!', true);
+      }
+    });
+
+    // Show toast notification
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show' + (isError ? ' error' : '');
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    // Initialize
+    (async () => {
+      await loadCredentials();
+      document.getElementById('loginForm').addEventListener('submit', login);
+    })();
+  </script>
+</body>
+</html>
