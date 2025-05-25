@@ -61,15 +61,20 @@ Toàn bộ các image đã được đẩy lên Docker Hub với tên người d
 ---
 ## Cách Chạy Hệ Thống
 
+# Bước 1: Tải các image từ Docker Hub
+```bash
+docker pull tonthanhdat/csai-backend_ai
+docker pull tonthanhdat/csai-backend_database
+docker pull tonthanhdat/csai-frontend
+```
+### Bước 2: Lưu tệp docker-compose.yml được cung cấp
 
-### Bước 1: Đảm bảo tệp docker-compose.yml đã có sẵn trong thư mục chương trình
-
-### Bước 2: Khởi chạy hệ thống
+### Bước 3: Khởi chạy hệ thống
 ``` bash 
 docker-compose up -d
 ```
-### Bước 3: Truy cập giao diện
-#### Người dùng: http://localhost:8080
+### Bước 3: Truy cập ứng dụng tại
+####  http://localhost:8080
 
 ## Project status
 The project is completed
