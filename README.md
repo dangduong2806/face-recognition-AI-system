@@ -52,9 +52,9 @@ Nhận diện gương mặt ở khu vực an ninh. Hiện nay, tại các cơ s�
 ## Liên kết docker hub
 ### Bước 1: Xây dựng và gắn thẻ hình ảnh Docker:
 ```bash
-docker tag csai-frontend tonthanhdat/csai-frontend
-docker tag csai-backend_database tonthanhdat/csai-backend_database
-docker tag csai-backend_ai tonthanhdat/csai-backend_ai
+docker tag AIsystemproject-frontend tonthanhdat/csai-frontend
+docker tag AIsystemproject-backend_database tonthanhdat/csai-backend_database
+docker tag AIsystemproject-backend_ai tonthanhdat/csai-backend_ai
 ```
 ### Bước 2: Đẩy lên Docker Hub:
 ``` bash
@@ -75,15 +75,9 @@ Toàn bộ các image đã được đẩy lên Docker Hub với tên người d
 ---
 ## Cách Chạy Hệ Thống
 
-### Bước 1: Tải các image từ Docker Hub
-```bash
-docker pull tonthanhdat/csai-backend_ai
-docker pull tonthanhdat/csai-backend_database
-docker pull tonthanhdat/csai-frontend
-```
-### Bước 2: Lưu tệp docker-compose.yml được cung cấp
+### Bước 1: Lưu tệp docker-compose.yml được cung cấp
 
-### Bước 3: Khởi chạy hệ thống
+### Bước 2: Khởi chạy hệ thống
 ``` bash 
 docker-compose up -d
 ```
