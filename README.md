@@ -47,7 +47,7 @@ Nhận diện gương mặt ở khu vực an ninh. Hiện nay, tại các cơ s�
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	AppService → SupabaseClient ("uses for DB"): AppService sử dụng SupabaseClient cho các thao tác cơ sở dữ liệu như lấy embedding (get_embeddings) và quản lý bản ghi người dùng (get_people, delete_person).  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;•	DBUtils → SupabaseClient ("uses for DB"): DBUtils sử dụng SupabaseClient để thực hiện lưu embedding thông qua phương thức save_embedding.  
 &nbsp;&nbsp;&nbsp;&nbsp;2.4. Cách sử dụng (usage)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Để nhận diện gương mặt, click chọn mở camera, nếu được vào hệ thống AI trả về kết quả tên, chức vụ và trạng thái được vào; nếu không được vào, hệ thống trả về Unknown, và trạng thái không được vào. Để tắt camera, click chọn tắt camera.  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Để nhận diện gương mặt, click chọn dùng camera, nếu được vào hệ thống AI trả về kết quả tên, chức vụ và trạng thái được vào; nếu không được vào, hệ thống trả về Unknown, và trạng thái không được vào. Để tắt camera, click chọn tắt camera.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Đối với admin, để thêm người dùng, click chọn vào nút thêm người dùng góc trái, điền thông tin rồi chọn lưu. Để sửa, và xoá thì chọn ở cột phía bên phải. Sau khi sửa xong, click chọn lưu.
 ## Liên kết docker hub
 ### Bước 1: Xây dựng và gắn thẻ hình ảnh Docker:
