@@ -1,0 +1,11 @@
+opencv-python-headless
+numpy
+requests
+deepface
+fastapi
+uvicorn
+python-multipart
+pydantic
+scikit-learn==1.3.2
+scipy
+pillow
