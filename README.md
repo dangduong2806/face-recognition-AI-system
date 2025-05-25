@@ -21,7 +21,7 @@ Nhận diện gương mặt ở khu vực an ninh. Hiện nay, tại các cơ s�
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.2.2. Admin sequence diagram  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/0f22fab3-570a-428c-8632-c1adde22934f" alt="..." width="550"/>  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Phân tích class diagram  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/5676e8a3-64e3-42b9-9488-92b3eb297fa1" alt="..." width="650"/>  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://github.com/user-attachments/assets/20a891bb-5cc9-4f04-874d-8d539327cb52" alt="..." width="950"/>  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Tổng quan về class diagram**  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sơ đồ lớp bao gồm sáu lớp chính: ImageData, WebService, ModelService, AppService, DBUtils, ModelUtils, và SupabaseClient. Các lớp này đại diện cho các thành phần cốt lõi của hệ thống nhận diện khuôn mặt, xử lý hình ảnh, phát hiện khuôn mặt, tạo embedding, tương tác cơ sở dữ liệu, và dịch vụ API. Mối quan hệ giữa các lớp được biểu thị bằng các mũi tên có nhãn, chỉ ra các phụ thuộc (ví dụ: "uses", "uses methods", "uses for DB").  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a. ImageData  
