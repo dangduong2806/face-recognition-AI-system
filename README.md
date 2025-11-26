@@ -1,12 +1,4 @@
 # Application to support face-recognition in military areas
-
-## Tên thành viên
-Group: Làm sai cái đúng
-1. 23020350 Nguyễn Đăng Dương
-2. 23020354 Tôn Thành Đạt
-3. 23020366 Nguyễn Trung Hiếu
-4. 23020360 Trương Trọng Đức
-5. 23020393 Muộn Quốc Khánh Linh
 ## Mô tả dự án
 **1. Chủ đề:**  
 Nhận diện gương mặt ở khu vực an ninh. Hiện nay, tại các cơ sở quân sự, công nghệ xác định khuôn mặt đóng góp không nhỏ trong việc kiểm soát truy cập vào các khu vực an ninh, chẳng hạn như các kho vũ khí và các khu vực tập luyện. Nhận thấy được điều đó, hệ thống nhận diện gương mặt, kiểm tra người được nhận diện có được phép vào khu vực quân sự này hay không đã được nhóm quyết định thực hiện.  
